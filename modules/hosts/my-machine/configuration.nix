@@ -11,6 +11,7 @@
       self.nixosModules.git
       self.nixosModules.docker
       self.nixosModules.firefox
+      self.nixosModules.simplescreenrecorder
     ];
 
     programs.antigravity.enable = true;
