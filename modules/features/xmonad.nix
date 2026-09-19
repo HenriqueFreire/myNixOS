@@ -110,6 +110,7 @@
               , ("M-p", spawn "dmenu_run -fn 'JetBrainsMono Nerd Font-11' -nb '#1e1e2e' -nf '#cdd6f4' -sb '#89b4fa' -sf '#1e1e2e'")
               , ("M-<Space>", spawn "dmenu_run -fn 'JetBrainsMono Nerd Font-11' -nb '#1e1e2e' -nf '#cdd6f4' -sb '#89b4fa' -sf '#1e1e2e'")
               , ("M-w", spawn "firefox")
+              , ("M-S-w", spawn "tor-browser")
               , ("M-<Tab>", sendMessage NextLayout)
               , ("M-b", sendMessage ToggleStruts)
               , ("M-q", kill)

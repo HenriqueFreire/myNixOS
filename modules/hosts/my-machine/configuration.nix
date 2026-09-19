@@ -4,13 +4,14 @@
     imports = [
       self.nixosModules.myMachineHardware
       self.nixosModules.antigravity
-      #self.nixosModules.xmonad
+      self.nixosModules.xmonad
       self.nixosModules.urxvt
       self.nixosModules.dunst
       self.nixosModules.neovim
       self.nixosModules.git
       self.nixosModules.docker
       self.nixosModules.firefox
+      self.nixosModules.tor-browser
       self.nixosModules.simplescreenrecorder
     ];
 
