@@ -2,6 +2,7 @@
   flake.nixosModules.neovim = { pkgs, ... }: {
     environment.systemPackages = [
       self.packages.${pkgs.stdenv.hostPlatform.system}.myNeovim
+      pkgs.wakatime-cli
     ];
     environment.variables.EDITOR = "nvim";
     environment.shellAliases = {
@@ -18,6 +19,7 @@
           extraPackages = with pkgs; [
             nodejs
             xdg-utils
+            wakatime-cli
           ];
 
           globals = {
@@ -56,6 +58,11 @@
 
           # Plugins essenciais para desenvolvimento e engenharia
           plugins = {
+            # Métricas e rastreamento de tempo de programação
+            wakatime = {
+              enable = true;
+            };
+
             # Realce de sintaxe avançado
             treesitter = {
               enable = true;
