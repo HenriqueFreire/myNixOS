@@ -96,26 +96,64 @@
               , ppSep             = "  <fc=#45475a>|</fc>  "
               }
 
-            -- Hook de inicialização: define layout de teclado ABNT2, fundo preto e cursor padrão
+            -- Hook de inicialização: define layout de teclado ABNT2, fundo preto, cursor e sincroniza ambiente para systemd/dbus
             myStartupHook :: X ()
             myStartupHook = do
               spawn "setxkbmap -layout br"
               spawn "xsetroot -solid '#000000' -cursor_name left_ptr"
+              spawn "systemctl --user import-environment DISPLAY XAUTHORITY"
+              spawn "dbus-update-activation-environment --systemd DISPLAY XAUTHORITY"
 
-            -- Atalhos adicionais em formato EZConfig (legíveis e fáceis de editar)
+            -- Atalhos customizados em formato EZConfig (legíveis e fáceis de editar)
             myKeys :: [(String, X ())]
             myKeys =
-              [ ("M-<Return>", spawn myTerminal)
-              , ("M-t", spawn myTerminal)
-              , ("M-p", spawn "dmenu_run -fn 'JetBrainsMono Nerd Font-11' -nb '#1e1e2e' -nf '#cdd6f4' -sb '#89b4fa' -sf '#1e1e2e'")
+              [ -- Aplicações e Terminal
+                ("M-<Return>", spawn myTerminal)
               , ("M-<Space>", spawn "dmenu_run -fn 'JetBrainsMono Nerd Font-11' -nb '#1e1e2e' -nf '#cdd6f4' -sb '#89b4fa' -sf '#1e1e2e'")
-              , ("M-w", spawn "firefox")
-              , ("M-S-w", spawn "tor-browser")
-              , ("M-<Tab>", sendMessage NextLayout)
-              , ("M-b", sendMessage ToggleStruts)
+
+              -- Fechar Janela (Mod + q)
               , ("M-q", kill)
+
+              -- Janelas Flutuantes (Mod + w e Mod + Shift + w para voltar ao mosaico/tiling)
+              , ("M-w", withFocused $ windows . W.sink)
+              , ("M-S-w", withFocused $ windows . W.sink)
+
+              -- Navegação e Foco de Janelas (Vim hjkl e Setas)
+              , ("M-h", windows W.focusUp)
+              , ("M-j", windows W.focusDown)
+              , ("M-k", windows W.focusUp)
+              , ("M-l", windows W.focusDown)
+              , ("M-<Left>", windows W.focusUp)
+              , ("M-<Down>", windows W.focusDown)
+              , ("M-<Up>", windows W.focusUp)
+              , ("M-<Right>", windows W.focusDown)
+              , ("M-m", windows W.focusMaster)
+              , ("M-<Tab>", windows W.focusDown)
+
+              -- Mover / Trocar Janelas de Posição (Vim hjkl e Setas)
+              , ("M-S-h", windows W.swapUp)
+              , ("M-S-j", windows W.swapDown)
+              , ("M-S-k", windows W.swapUp)
+              , ("M-S-l", windows W.swapDown)
+              , ("M-S-<Left>", windows W.swapUp)
+              , ("M-S-<Down>", windows W.swapDown)
+              , ("M-S-<Up>", windows W.swapUp)
+              , ("M-S-<Right>", windows W.swapDown)
+              , ("M-S-<Return>", windows W.swapMaster)
+
+              -- Redimensionar Janela Mestre
+              , ("M-C-h", sendMessage Shrink)
+              , ("M-C-l", sendMessage Expand)
+              , ("M-,", sendMessage (IncMasterN 1))
+              , ("M-.", sendMessage (IncMasterN (-1)))
+
+              -- Layouts
+              , ("M-e", sendMessage NextLayout)
+              , ("M-b", sendMessage ToggleStruts)
+
+              -- Gerenciamento de Sessão (Mod+Shift+r restart, Mod+Shift+e exit)
               , ("M-S-r", spawn "xmonad --restart")
-              , ("M-S-q", io (exitWith ExitSuccess))
+              , ("M-S-e", io (exitWith ExitSuccess))
 
               -- Controles de Áudio (WirePlumber / PipeWire)
               , ("<XF86AudioRaiseVolume>", spawn "wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+")

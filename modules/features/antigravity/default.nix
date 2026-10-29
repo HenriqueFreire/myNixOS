@@ -2,6 +2,11 @@
   flake.nixosModules.antigravity = { pkgs, lib, config, ... }: {
     options.programs.antigravity = {
       enable = lib.mkEnableOption "Google Antigravity CLI agent";
+      extraPackages = lib.mkOption {
+        type = lib.types.listOf lib.types.package;
+        default = [ ];
+        description = "Extra packages to make available in systemPackages for Antigravity.";
+      };
     };
 
     config = lib.mkIf config.programs.antigravity.enable {
@@ -10,7 +15,7 @@
       ];
       environment.systemPackages = [
         self.packages.${pkgs.stdenv.hostPlatform.system}.antigravity-cli
-      ];
+      ] ++ config.programs.antigravity.extraPackages;
     };
   };
 
@@ -26,6 +31,7 @@
             pkgs.ripgrep
             pkgs.fd
             pkgs.coreutils
+            pkgs.uv
           ]}
       '';
     };

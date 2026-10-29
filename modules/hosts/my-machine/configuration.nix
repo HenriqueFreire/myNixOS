@@ -13,9 +13,15 @@
       self.nixosModules.firefox
       self.nixosModules.tor-browser
       self.nixosModules.simplescreenrecorder
+      self.nixosModules.android
+      self.nixosModules.pcsx2
+      self.nixosModules.yt-dlp
+      self.nixosModules.mgba
+      self.nixosModules.workspaceMcp
     ];
 
     programs.antigravity.enable = true;
+    programs.antigravity.mcp.workspace.enable = true;
 
     # 1. Bootloader e Parâmetros de Kernel
     boot.loader.systemd-boot.enable = true;
@@ -197,7 +203,14 @@
       "d /var/cache/henrique 0700 henrique users -"
     ];
 
-    # 9. Pacotes e Funcionalidades do Nix
+    # 9. Integração de Desktop e Portais (Screenshots, Diálogos de Arquivo)
+    xdg.portal = {
+      enable = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+      config.common.default = "*";
+    };
+
+    # 10. Pacotes e Funcionalidades do Nix
     nixpkgs.config.allowUnfree = true;
     nix.settings = {
       experimental-features = [ "nix-command" "flakes" ];
@@ -213,19 +226,23 @@
     nix.optimise.automatic = true;
 
     environment.systemPackages = with pkgs; [
-      flameshot     # Ferramenta gráfica completa para captura e anotação de screenshots
-      libva-utils   # Utilitário vainfo para checar aceleração por hardware (VA-API)
+      flameshot         # Ferramenta gráfica completa para captura e anotação de screenshots
+      libva-utils       # Utilitário vainfo para checar aceleração por hardware (VA-API)
       wget
-      pavucontrol   # Interface para controlar volume e portas do Pipewire
-      alsa-utils    # Utilitários ALSA (alsamixer, amixer, arecord)
-      pulseaudio    # Utilitários PulseAudio (pactl)
-      libnotify     # Notificações do sistema
-      btop          # Monitor de recursos TUI
-      yazi          # Gerenciador de arquivos TUI com suporte a imagens
-      fzf           # Fuzzy finder
-      mpv           # Player de vídeo minimalista acelerado por hardware
-      cmus          # Player de música TUI ultra-leve
-      yt-dlp        # Utilitário CLI para download e streaming de vídeos
+      pavucontrol       # Interface para controlar volume e portas do Pipewire
+      alsa-utils        # Utilitários ALSA (alsamixer, amixer, arecord)
+      pulseaudio        # Utilitários PulseAudio (pactl)
+      libnotify         # Notificações do sistema
+      btop              # Monitor de recursos TUI
+      yazi              # Gerenciador de arquivos TUI com suporte a imagens
+      ueberzugpp        # Suporte a renderização de imagens e miniaturas no URxvt / X11
+      ffmpegthumbnailer # Miniaturas de vídeos para o Yazi
+      imagemagick       # Manipulação e renderização de imagens extras e SVGs
+      poppler-utils     # Pré-visualização de arquivos PDF no Yazi (pdftoppm)
+      chafa             # Renderizador visual auxiliar
+      fzf               # Fuzzy finder
+      mpv               # Player de vídeo minimalista acelerado por hardware
+      cmus              # Player de música TUI ultra-leve
     ];
   };
 
